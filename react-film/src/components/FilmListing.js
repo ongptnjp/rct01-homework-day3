@@ -3,7 +3,9 @@ import FilmRow from './FilmRow';
 
 class FilmListing extends Component {
   state = {
-    filter: 'all'
+    filter: 'all',
+    allfilms: {},
+    favesFilms: {}
   }
 
   handleFilterClick = filter => {
@@ -12,22 +14,43 @@ class FilmListing extends Component {
   }
 
   render() {
-    const allFilms = this.props.films.map(film => <FilmRow key={film.id} film={film} />);
+    const allFilms = this.props.films.map(film => 
+      <FilmRow 
+        key={film.id}
+        film={film}
+        onFaveToggle={
+          () => this.props.handleFaveToggle(film)
+        }
+        isFave={this.props.faves.includes(film)}
+        handleDetailsClick={this.props.handleDetailsClick}
+      />);
+    const favesFilms = this.props.faves.map(fave =>
+      <FilmRow 
+        key={fave.id}
+        film={fave}
+        onFaveToggle={
+          () => this.props.handleFaveToggle(fave)
+        }
+        isFave={this.props.faves.includes(fave)}
+        handleDetailsClick={this.props.handleDetailsClick}
+      />);
     return (
       <div className="film-list">
         <h1 className="section-title">FILMS</h1>
         <div className="film-list-filters">
-          <div className={"film-list-filter " + (this.state.filter === "all" ? "is-active" : "")} onClick={() => this.handleFilterClick('all')}>
+          <div className={"film-list-filter " + (this.state.filter === "all" ? "is-active" : "")}
+            onClick={() => this.handleFilterClick('all')}>
             ALL
       <span className="section-count">{this.props.films.length}</span>
           </div>
-          <div className={"film-list-filter " + (this.state.filter === "faves" ? "is-active" : "")} onClick={() => this.handleFilterClick('faves')}>
+          <div className={"film-list-filter " + (this.state.filter === "faves" ? "is-active" : "")}
+            onClick={() => this.handleFilterClick('faves')}>
             FAVES
-      <span className="section-count">0</span>
+      <span className="section-count">{this.props.faves.length}</span>
           </div>
         </div>
 
-        {allFilms}
+        {this.state.filter === "all" ? allFilms : favesFilms}
       </div>
     )
   }
