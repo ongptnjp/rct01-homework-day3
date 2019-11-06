@@ -4,7 +4,7 @@ import FilmListing from './components/FilmListing';
 import FilmDetails from './components/FilmDetails';
 import './App.css';
 
-const { films } = TMDB;
+const { films, api_key } = TMDB;
 
 class App extends Component {
 
@@ -31,6 +31,15 @@ class App extends Component {
   handleDetailsClick = film => {
     console.log(`Fetching details for ${film.title}`);
 
+    const url = `https://api.themoviedb.org/3/movie/${film.id}?api_key=${api_key}&append_to_response=videos,images&language=en`;
+    fetch(url)
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        this.setState({ current: data });
+      });
   }
 
   render() {
@@ -42,7 +51,7 @@ class App extends Component {
           handleFaveToggle={this.handleFaveToggle}
           handleDetailsClick={this.handleDetailsClick}
         />
-        <FilmDetails films={this.state.current} />
+        <FilmDetails film={this.state.current} />
       </div>
     );
   }
